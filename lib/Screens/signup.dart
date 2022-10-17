@@ -7,14 +7,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdownfield2/dropdownfield2.dart';
-
+import 'package:batnf/Screens/dash_board.dart';
 import 'package:batnf/Screens/signin.dart';
 import 'package:batnf/constants/color_constant.dart';
 import 'package:batnf/constants/text_style_constant.dart';
 import 'package:batnf/widgets/reuseable_text_field.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:batnf/Screens/landing_page.dart';
+
 import '../providers/event_provider.dart';
 import 'package:provider/provider.dart';
 

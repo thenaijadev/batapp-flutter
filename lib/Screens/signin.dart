@@ -4,23 +4,23 @@ import 'dart:convert';
 
 import 'package:batnf/providers/event_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_switch/flutter_switch.dart';
+// import 'package:flutter_switch/flutter_switch.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
+// import 'package:http/http.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:batnf/Screens/dash_board.dart';
-import 'package:batnf/Screens/forget_password_page.dart';
+// import 'package:batnf/Screens/forget_password_page.dart';
 import 'package:batnf/Screens/signup.dart';
 import 'package:batnf/constants/color_constant.dart';
 import 'package:batnf/constants/text_style_constant.dart';
 import 'package:batnf/widgets/reuseable_text_field.dart';
 import 'package:to_curl/to_curl.dart';
-import 'package:dio/dio.dart';
-import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
+// import 'package:dio/dio.dart';
+// import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 
 class SignIn extends StatefulWidget {
   static String id = 'signin';
@@ -50,6 +50,20 @@ class _SignInState extends State<SignIn> {
   TextEditingController emailController = TextEditingController();
 
   TextEditingController passwordController = TextEditingController();
+  Future<void> forgotPassword({required String email}) async {
+    var response =
+        await http.post(Uri.parse("https://www.batnf.net/api/forgot_password"),
+            body: jsonEncode(
+              {
+                "identity": email,
+              },
+            ),
+            headers: {
+          "Content-Type": "application/json",
+        });
+    print(response.body);
+    print(response.statusCode);
+  }
 
   Future<void> login({required String email, required String password}) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -60,23 +74,18 @@ class _SignInState extends State<SignIn> {
           "password": password,
         }),
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json;charset=UTF-8',
+          'Charset': 'utf-8'
         });
+    List theList = [response.body, "This is it"];
 
-    // String data = response.body.toString();
-    // var info = jsonDecode(data);
-    // print(info);
-    // print(response.statusCode);
-    // print(response.headers);
-    // } catch (e) {
-    //   print(e);
-    // }
-
-    // print(response.toString());
-
+    print(theList);
     try {
+      print(response.statusCode);
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
+        print("Hello");
+        print(response.body);
+        Map<String, dynamic> data = json.decode(response.body);
 
         if (data['status'] == 200) {
           activate();
@@ -132,25 +141,25 @@ class _SignInState extends State<SignIn> {
 
 // Response response;
 
-  void getHttp() async {
-    final dio = Dio();
+  // void getHttp() async {
+  //   final dio = Dio();
 
-    dio.interceptors.add(CurlLoggerDioInterceptor(printOnSuccess: true));
-    dio.post('https://www.batnf.net/api/login',
-        options: Options(headers: {
-          "Content-Type": "application/json",
-        }));
-    try {
-      var response = await dio.post('https://www.batnf.net/api/login',
-          data: {'identity': 'admin@admin.com', 'password': 'password'});
-      print(response);
+  //   dio.interceptors.add(CurlLoggerDioInterceptor(printOnSuccess: true));
+  //   dio.post('https://www.batnf.net/api/login',
+  //       options: Options(headers: {
+  //         "Content-Type": "application/json",
+  //       }));
+  //   try {
+  //     var response = await dio.post('https://www.batnf.net/api/login',
+  //         data: {'identity': 'admin@admin.com', 'password': 'password'});
+  //     // print(response);
 
-      final req = Request('POST', Uri.parse('https://www.batnf.net/api/login'));
-      print(toCurl(req));
-    } catch (e) {
-      print(e);
-    }
-  }
+  //     final req = Request('POST', Uri.parse('https://www.batnf.net/api/login'));
+  //     print(toCurl(req));
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   getEmail() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -283,10 +292,10 @@ class _SignInState extends State<SignIn> {
                             setState(() {
                               loading = true;
                             });
-                            login(
+                            await login(
                                 email: emailController.text,
                                 password: passwordController.text);
-                            getHttp();
+                            // getHttp();
                             activate();
                           }
                         },
@@ -305,8 +314,8 @@ class _SignInState extends State<SignIn> {
                     //Forget Password Request
                     Center(
                       child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, ForgetPassword.id);
+                        onTap: () async {
+                          await forgotPassword(email: emailController.text);
                         },
                         child: Text(
                           'forgot password?',
